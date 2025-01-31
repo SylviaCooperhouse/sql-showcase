@@ -2,7 +2,7 @@
 
 -- 1. Basic SELECT & Filtering
 -- Retrieve all customers who signed up in 2024, sorted by name.
--- Retrieve only customers from a specific region (e.g., 'North America').
+-- Also, retrieve only customers from a specific region (e.g., 'North America').
 
 -- 2. Joins (INNER JOIN, LEFT JOIN, RIGHT JOIN)
 -- Retrieve all orders with customer names (including customers without orders).
