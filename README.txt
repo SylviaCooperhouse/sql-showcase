@@ -16,6 +16,16 @@ The repository includes:
 - **Real-World SQL Challenges**: Practical queries modeled after actual business cases.
 
 ---
+🚀 SQL Training Plan (Day-by-Day)
+Day	Focus Area
+Day 1	Core SQL Syntax Drill (SELECT, WHERE, GROUP BY, Aggregations, Window Functions, CTEs)
+Day 2	SQL Query Drill & Joins Practice (Intermediate Queries, Joins, Aggregations, Window Functions, CTEs)
+Day 3	SQL Advanced Querying & Optimization (Indexes, Recursive CTEs, JSON Handling, Transactions)
+Day 4	Real-World Business Queries (Sales Insights, Customer Retention, Ranking, Complex Joins)
+Day 5	Performance Tuning & Query Optimization (Indexing Strategies, Partitioning, Caching, Execution Plans)
+Day 6	Database Design & Normalization (Schema Design, Normal Forms, Best Practices)
+Day 7	SQL System Design & Architecture (Sharding, Replication, Query Caching, Large-Scale Data)
+---
 
 ## 📌 **Key Topics Covered**
 ### **1️⃣ Core SQL Querying**
