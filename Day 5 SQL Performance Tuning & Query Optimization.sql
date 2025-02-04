@@ -48,13 +48,15 @@ GROUP BY c.name;
 CREATE INDEX idx_orders_customer_id ON orders(customer_id);
 
 -- 5. Avoiding Unnecessary Queries
--- Use EXISTS instead of COUNT(*) for efficiency.
+-- Use EXISTS instead of COUNT(*) when checking for the existence of records.
 
--- Inefficient way:
+-- Inefficient way (Counts all matching rows even if not needed):
 SELECT COUNT(*) FROM orders WHERE customer_id = 12345;
+-- Example output: 5 (if there are 5 matching orders)
 
--- Efficient way:
+-- Efficient way (Stops at first matching row, faster for large datasets):
 SELECT EXISTS (SELECT 1 FROM orders WHERE customer_id = 12345);
+-- Example output: true (if at least one order exists), false (if none exist)
 
 -- 6. Caching Strategies
 -- Use materialized views to cache results for faster access.
@@ -66,6 +68,9 @@ GROUP BY customer_id;
 
 -- Refresh materialized view periodically:
 REFRESH MATERIALIZED VIEW customer_order_summary;
+
+-- Materialized views store the query results, unlike regular views which recompute results every time.
+-- Refreshing updates the stored results, so queries run against precomputed data.
 
 -- 7. Optimizing Aggregations
 -- Use indexes to speed up GROUP BY and HAVING operations.
@@ -84,6 +89,7 @@ CREATE INDEX idx_orders_total_amount ON orders(total_amount);
 
 -- Inefficient way (can slow down with large offsets):
 SELECT * FROM orders ORDER BY order_date DESC LIMIT 10 OFFSET 1000;
+-- Large OFFSET values make queries slow because SQL must read all skipped rows first.
 
 -- More efficient approach using keyset pagination:
 SELECT * FROM orders
