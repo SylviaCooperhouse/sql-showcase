@@ -1,9 +1,11 @@
 -- Day 7: SQL System Design & Architecture
 
 -- 1. Database Sharding
--- Example of horizontal sharding by customer_id
--- Splitting data across multiple tables based on customer regions
+-- Sharding splits large tables into smaller, more manageable ones, improving performance.
+-- It can be done by dividing data across multiple servers or databases.
+-- This helps distribute load and allows horizontal scaling.
 
+-- Example of horizontal sharding by customer_id (Splitting customers by region)
 CREATE TABLE customers_shard_1 (
     customer_id SERIAL PRIMARY KEY,
     name TEXT,
@@ -16,22 +18,29 @@ CREATE TABLE customers_shard_2 (
     region TEXT CHECK (region = 'Europe')
 );
 
--- Query to retrieve customer details based on sharding
+-- Query to retrieve customer details from the correct shard
 SELECT * FROM customers_shard_1 WHERE customer_id = 1001;
 SELECT * FROM customers_shard_2 WHERE customer_id = 2055;
 
 -- 2. Database Replication
--- Setting up read replicas to improve performance
+-- Replication creates one or more copies (replicas) of a database for better performance and reliability.
+-- Read replicas handle SELECT queries, reducing load on the primary database.
+-- Failover replication allows automatic recovery in case the primary database crashes.
 
--- Creating a read replica (simulated example)
+-- Setting up read replicas to improve performance
+-- `CREATE PUBLICATION` on the primary database marks tables for replication.
 CREATE PUBLICATION customer_data_pub FOR TABLE customers;
+
+-- `CREATE SUBSCRIPTION` on the replica database subscribes to changes from the primary.
 CREATE SUBSCRIPTION customer_data_sub CONNECTION 'host=replica_server dbname=mydb' PUBLICATION customer_data_pub;
 
 -- Querying from a read replica (read-only replica usage)
 SELECT * FROM customers WHERE customer_id = 12345;
+-- Read queries are typically directed to replicas to balance database load.
 
 -- 3. Query Caching
--- Using Materialized Views to store computed results for faster retrieval
+-- Caching speeds up queries by storing results instead of recomputing them every time.
+-- Materialized Views store query results for faster retrieval, reducing expensive computations.
 
 CREATE MATERIALIZED VIEW top_customers AS
 SELECT customer_id, SUM(total_amount) AS total_spent
@@ -43,7 +52,8 @@ ORDER BY total_spent DESC LIMIT 100;
 REFRESH MATERIALIZED VIEW top_customers;
 
 -- 4. Handling Large-Scale Data with Partitioning
--- Implementing range partitioning to distribute data efficiently
+-- Partitioning splits large tables into smaller partitions to improve query performance.
+-- Queries only scan relevant partitions, reducing execution time.
 
 CREATE TABLE transactions (
     transaction_id SERIAL PRIMARY KEY,
@@ -62,14 +72,20 @@ CREATE TABLE transactions_2024 PARTITION OF transactions
 SELECT * FROM transactions WHERE transaction_date BETWEEN '2023-06-01' AND '2023-06-30';
 
 -- 5. High Availability & Failover Strategies
--- Creating a failover replica for automatic recovery
+-- High availability ensures databases remain operational even during failures.
+-- Failover strategies involve having standby replicas that can take over when the primary fails.
 
 CREATE PUBLICATION failover_pub FOR ALL TABLES;
 CREATE SUBSCRIPTION failover_sub CONNECTION 'host=failover_server dbname=mydb' PUBLICATION failover_pub;
 
 -- 6. Load Balancing Queries
--- Using connection pooling to distribute queries across multiple replicas
+-- Load balancing distributes queries across multiple replicas to improve performance.
+-- Applications typically route SELECT queries to read replicas automatically.
+-- Load balancing is done at the **database connection level**, not within SQL itself.
 
 -- Simulated example of a load-balanced query
 SELECT * FROM customers WHERE customer_id = 7890;
--- This query would be directed to a read replica automatically in a production setting
+-- In a production setting, this query would be routed to a read replica by a database proxy.
+-- AWS RDS Proxy, PgBouncer, or application-level logic handles this routing.
+
+-- Load balancing helps prevent database overload and improves scalability.
